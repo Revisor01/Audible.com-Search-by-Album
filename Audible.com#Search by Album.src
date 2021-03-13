@@ -16,11 +16,11 @@
 
 [Name]=Audible.com
 [BasedOn]=www.audible.com
-[IndexUrl]=https://www.audible.com/search?ipRedirectOverride=true&overrideBaseCountry=true&keywords=
-[AlbumUrl]=https://www.audible.com
+[IndexUrl]=https://www.audible.de/search?ipRedirectOverride=true&overrideBaseCountry=true&keywords=
+[AlbumUrl]=https://www.audible.de
 [WordSeperator]=+
 [IndexFormat]=%_url%|%Album%|%Author%|%Duration%|%Year%|%Language%
-[SearchBy]=%artist% $regexp(%album%,'[- ]+cd ?\d+$',,1)
+[SearchBy]=$regexp(%album%,'[- ]+cd ?\d+$',,1)
 [Encoding]=url-utf-8
 
 
@@ -39,9 +39,9 @@ regexpreplace "\s\s+" " "
 regexpreplace "\t+" " "
 replace "\" >" "\">"
 replace "> <" "><"
-replace "Running Time:" ""
+replace "Spieldauer:" ""
 
-findinline "results"
+findinline "Ergebnisse"
 findinline "<h3 class=\"bc-heading"
 
 do
@@ -86,13 +86,13 @@ do
     say "|"
 
     # Year
-    findinline "Release date:" 1 1
+    findinline "Erscheinungsdatum:" 1 1
 	sayuntil "<"
 	say "|"
 
 	# Language
 	findinline "languageLabel\""
-	findinline "Language:"
+	findinline "Sprache:"
 	sayuntil "<"
 
 	saynewline
@@ -178,7 +178,7 @@ joinuntil "</li>"
 regexpreplace "</?[^><]+>" ""
 unspace
 regexpreplace "  +" " "
-regexpreplace ".+Narrated by:" ""
+regexpreplace ".+Gesprochen von:" ""
 sayrest
 
 # Grouping / Series
@@ -192,7 +192,7 @@ if "seriesLabel"
 	findinline ">"
 	sayuntil "<"
 	outputto "series-part"
-	findinline "a>, Book " 1 1
+	findinline "a>, Teil " 1 1
 	SayRegexp "^[.?\d]+(?=,|$)"
 	outputto "Albumsort"
 	sayoutput "series"
@@ -202,7 +202,7 @@ if "seriesLabel"
 	sayoutput "album"
 	outputto "CONTENTGROUP"
 	sayoutput "series"
-	say ", Book #"
+	say ", Teil #"
 	sayoutput "series-part"
 	IfnotOutput "Subtitle"
 		outputto "subtitle"
@@ -276,9 +276,9 @@ endif
 
 # Description
 gotoline 1
-findline "bc-text-bold\" >Publisher's Summary</h2>" 1 1
+findline "bc-text-bold\" >Inhaltsangabe</h2>" 1 1
 unspace
-if "bc-text-bold\" >Publisher's Summary</h2>"
+if "bc-text-bold\" >Inhaltsangabe</h2>"
 	outputto "Comment"
 	findline "<span class"
 	joinuntil "</span>"
